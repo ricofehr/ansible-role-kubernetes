@@ -38,4 +38,4 @@
     - kubelet={{ kubernetes_version }}
     - kubectl={{ kubernetes_version }}
     - kubeadm={{ kubernetes_version }}
-    - kubernetes-cni
+    - kubernetes-cni={{ kubernetes_cni_version }}

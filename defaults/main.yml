@@ -18,3 +18,5 @@ kubernetes_node_type: worker
 kubernetes_apt_key_id: 3746C208A7317B0F
 
 kubernetes_version: '*'
+
+kubernetes_cni_version: '*'
