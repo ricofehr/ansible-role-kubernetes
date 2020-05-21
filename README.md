@@ -11,7 +11,7 @@ manager.
 Requirements
 ------------
 
-* Ansible >= 2.0
+* Ansible >= 2.7
 
 * Linux Distribution
 
@@ -20,6 +20,7 @@ Requirements
         * Ubuntu
 
             * Xenial (16.04)
+            * Bionic (18.04)
 
 Role Variables
 --------------
@@ -29,6 +30,8 @@ are shown below):
 
 ```yaml
 # Node type: determines what features are installed.
+# - controller:
+#     - kubectl
 # - worker:
 #     - kubelet
 #     - kubernetes-cni
@@ -44,7 +47,7 @@ are shown below):
 kubernetes_node_type: worker
 
 # The ID of the APT key for the Kubernetes repository
-kubernetes_apt_key_id: 3746C208A7317B0F
+kubernetes_apt_key_id: 6A030B21BA07F4FB
 ```
 
 Example Playbook
@@ -55,6 +58,59 @@ Example Playbook
   roles:
     - role: gantsign.kubernetes
       kubernetes_node_type: worker
+```
+
+Tab Completion & Aliases for Zsh
+--------------------------------
+
+### Using Ansible
+
+We recommended using the
+[gantsign.antigen](https://galaxy.ansible.com/gantsign/antigen) role to enable
+Zsh support for Kubernetes (this must be configured for each user).
+
+```yaml
+- hosts: servers
+  roles:
+    - role: gantsign.kubernetes
+      kubernetes_node_type: worker
+
+    - role: gantsign.antigen
+      users:
+        - username: example
+          antigen_libraries:
+            - name: oh-my-zsh
+          antigen_bundles:
+            # Use the Oh My Zsh plugin for kubectl
+            - name: kubectl
+            # Use the GantSign plugin for kubeadm
+            - name: kubeadm
+              url: gantsign/zsh-plugins
+              location: kubeadm
+```
+
+### Using Antigen
+
+If you prefer to use [Antigen](https://github.com/zsh-users/antigen) directly
+add the following to your Antigen configuration:
+
+```bash
+antigen use oh-my-zsh
+antigen bundle kubectl
+antigen bundle gantsign/zsh-plugins kubeadm
+```
+
+**Important:** there's a [bug](https://github.com/zsh-users/antigen/issues/583)
+with the current version of Antigen that prevents it working with the `kubectl`
+plugin. We recommend using version `2.0.2` of Antigen until the issue is fixed.
+
+### Manual configuration
+
+To manually configure Zsh tab completion add the following to your `.zshrc`:
+
+```bash
+eval "$(kubectl completion zsh)"
+eval "$(kubeadm completion zsh)"
 ```
 
 More Roles From GantSign
@@ -79,13 +135,19 @@ To develop or test you'll need to have installed the following:
 * [Ansible](https://www.ansible.com/)
 * [Molecule](http://molecule.readthedocs.io/)
 
-To run the role (i.e. the `tests/test.yml` playbook), and test the results
-(`tests/test_role.py`), execute the following command from the project root
-(i.e. the directory with `molecule.yml` in it):
+Because the above can be tricky to install, this project includes
+[Molecule Wrapper](https://github.com/gantsign/molecule-wrapper). Molecule
+Wrapper is a shell script that installs Molecule and it's dependencies (apart
+from Linux) and then executes Molecule with the command you pass it.
+
+To test this role using Molecule Wrapper run the following command from the
+project root:
 
 ```bash
-molecule test
+./moleculew test
 ```
+
+Note: some of the dependencies need `sudo` permission to install.
 
 License
 -------

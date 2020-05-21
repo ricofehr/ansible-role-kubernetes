@@ -1,0 +1,8 @@
+---
+- name: install kubernetes (worker)
+  become: yes
+  apt:
+    name:
+      - kubelet={{ kubernetes_version }}
+      - kubernetes-cni={{ kubernetes_cni_version }}
+    state: present
