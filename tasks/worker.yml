@@ -4,5 +4,6 @@
   apt:
     name:
       - kubelet={{ kubernetes_version }}
+      - kubeadm={{ kubernetes_version }}
       - kubernetes-cni={{ kubernetes_cni_version }}
     state: present
